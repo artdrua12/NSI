@@ -1,5 +1,5 @@
 <template>
-  <v-data-table 
+  <v-data-table
     v-model="selected"
     :headers="headers"
     :items="dataTable"
@@ -27,9 +27,9 @@
           >
           </v-select>
         </v-col>
-        <v-col cols="6"> </v-col>
+        <v-col cols="4"> </v-col>
 
-        <v-col cols="3">
+        <v-col cols="5">
           <v-select
             v-model="selectSetingTable"
             :items="setingTable"
@@ -80,7 +80,7 @@ export default {
         { text: "Выгрузить реестр НСИ", disabled: false },
         { text: "Выгрузить справочник", disabled: false },
       ],
-      selected: [],
+      // selected: [],
       inisializeHeaders: [
         {
           text: "Код справочника",
@@ -90,79 +90,20 @@ export default {
         { text: "Наименование справочника", value: "name" },
       ],
       headers: [],
-      dataTable: [
-        {
-          code: 123,
-          type: "Пользовательский",
-          name: "Справочник",
-          dataStart: "24.06.2009",
-          dataEnd: "24.06.2009",
-        },
-        {
-          code: 321,
-          type: "Пользовательский",
-          name: "Справочник",
-          dataStart: "24.06.2009",
-          dataEnd: "24.06.2009",
-        },
-        {
-          code: 345,
-          type: "Защищенный",
-          name: "Справочник",
-          dataStart: "24.06.2009",
-          dataEnd: "24.06.2009",
-        },
-        {
-          code: 678,
-          type: "Пользовательский",
-          name: "Справочник",
-          dataStart: "24.06.2009",
-          dataEnd: "24.06.2009",
-        },
-        {
-          code: 910,
-          type: "Технологический",
-          name: "Справочник2",
-          dataStart: "24.06.2009",
-          dataEnd: "24.06.2009",
-        },
-        {
-          code: 1234,
-          type: "Пользовательский",
-          name: "Справочник",
-          dataStart: "24.06.2009",
-          dataEnd: "24.06.2009",
-        },
-        {
-          code: 3210,
-          type: "Пользовательский",
-          name: "Справочник",
-          dataStart: "24.06.2009",
-          dataEnd: "24.06.2009",
-        },
-        {
-          code: 3445,
-          type: "Защищенный",
-          name: "Справочник",
-          dataStart: "24.06.2009",
-          dataEnd: "24.06.2009",
-        },
-        {
-          code: 6786,
-          type: "Пользовательский",
-          name: "Справочник",
-          dataStart: "24.06.2009",
-          dataEnd: "24.06.2009",
-        },
-        {
-          code: 9170,
-          type: "Технологический",
-          name: "Справочник2",
-          dataStart: "24.06.2009",
-          dataEnd: "24.06.2009",
-        },
-      ],
     };
+  },
+  computed: {
+    dataTable() {
+      return this.$store.getters.findDataTable;
+    },
+    selected: {
+      get() {
+        return this.$store.state.selected;
+      },
+      set(value) {
+        this.$store.commit("set", { name: "selected", value: value });
+      },
+    },
   },
   mounted() {
     this.updateHeaders();
@@ -178,10 +119,9 @@ export default {
     },
     changeAction() {
       if (this.selectedAction.text == "Создать справочник") {
-        this.$router.push({ path: "create", query: { nsi: this.selected[0] } });
-      }
-      else {
-        this.$router.push({ path: "loadDischarge" });
+        this.$router.push("/create");
+      } else {
+        this.$router.push("/loadDischarge");
       }
     },
   },

@@ -25,6 +25,20 @@
     <v-main>
       <router-view />
     </v-main>
+
+    <v-snackbar
+      v-model="snackbar.run"
+      :color="snackbar.color"
+      :timeout="2000"
+      right="right"
+    >
+      {{ snackbar.text }}
+      <template v-slot:action="{ attrs }">
+        <v-btn dark text v-bind="attrs" @click="snackbar.run = false"
+          >Close</v-btn
+        >
+      </template>
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -35,6 +49,16 @@ export default {
   data: () => ({
     //
   }),
+  computed: {
+    snackbar: {
+      get() {
+        return this.$store.getters.get("message");
+      },
+      set() {
+        this.$store.commit("setMessange", { color: "", text: "", run: false });
+      },
+    },
+  },
 };
 </script>
 

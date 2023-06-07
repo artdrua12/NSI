@@ -1,8 +1,9 @@
 <template>
-  <v-card>
+  <v-card class="pa-5">
     <v-card-title>Реестр справочников</v-card-title>
     <v-form ref="form" class="directory">
       <v-select
+        v-model="type"
         :items="typesNSI"
         filled
         label="Тип справочника"
@@ -28,10 +29,9 @@
         filled
         label="Статус на текущую дату"
         menu-props="auto"
-        hide-details=""
       ></v-select>
       <v-btn text width="220" @click="reset">Очистить форму</v-btn>
-      <v-btn width="120" class="jSelfEnd"
+      <v-btn width="120" class="jSelfEnd" @click="find"
         ><v-icon>mdi-magnify</v-icon>Поиск</v-btn
       >
     </v-form>
@@ -46,15 +46,49 @@ export default {
   name: "HomeViews",
   data() {
     return {
-      typesNSI: ["Пользовательский", "Технологический", "Защищенный"],
       name: "",
       code: "",
-      items: ["Foo", "Bar", "Fizz", "Buzz"],
+      type: "",
+      typesNSI: ["Пользовательский", "Технологический", "Защищенный"],
+      items: ["активен", "не активен"],
     };
+  },
+  computed: {
+    dataTable() {
+      return this.$store.getters.findDataTable;
+    },
   },
   methods: {
     reset() {
       this.$refs.form.reset();
+      this.find();
+
+      this.$store.commit("set", {
+        name: "message",
+        value: {
+          color: "orange darken-2",
+          text: "Фильтры поиска сброшены",
+          run: true,
+        },
+      });
+    },
+
+    find() {
+      this.$store.commit("set", {
+        name: "type",
+        value: this.type,
+      });
+
+      this.$store.commit("set", {
+        name: "code",
+        value: this.code,
+      });
+
+      this.$store.commit("set", {
+        name: "name",
+        value: this.name,
+      });
+
     },
   },
   components: {

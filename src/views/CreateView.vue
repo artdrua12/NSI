@@ -3,7 +3,8 @@
     <v-card-title>Создание/Редактирование справочника</v-card-title>
     <v-form ref="form" class="directory">
       <v-text-field
-        v-model="nsi.name"
+        v-if="selected[0]"
+        v-model="selected[0].name"
         :counter="100"
         label="Наименование"
         filled
@@ -11,7 +12,8 @@
       ></v-text-field>
 
       <v-select
-        v-model="nsi.type"
+        v-if="selected[0]"
+        v-model="selected[0].type"
         :items="typesNSI"
         filled
         label="Тип справочника"
@@ -19,13 +21,15 @@
       ></v-select>
 
       <v-text-field
-        v-model="nsi.code"
+        v-if="selected[0]"
+        v-model="selected[0].code"
         :counter="30"
         label="Код"
         filled
       ></v-text-field>
 
       <v-menu
+        v-if="selected[0]"
         v-model="menuStart"
         :close-on-content-click="false"
         :nudge-right="40"
@@ -35,7 +39,7 @@
       >
         <template v-slot:activator="{ on, attrs }">
           <v-text-field
-            v-model="dateStart"
+            v-model="selected[0].dataStart"
             label="Дата начала действия"
             readonly
             v-bind="attrs"
@@ -44,7 +48,7 @@
           ></v-text-field>
         </template>
         <v-date-picker
-          v-model="dateStart"
+          v-model="selected[0].dataStart"
           locale="ru-ru"
           first-day-of-week="1"
           @input="menuStart = false"
@@ -53,6 +57,7 @@
       </v-menu>
 
       <v-menu
+        v-if="selected[0]"
         v-model="menuEnd"
         :close-on-content-click="false"
         :nudge-right="40"
@@ -62,7 +67,7 @@
       >
         <template v-slot:activator="{ on, attrs }">
           <v-text-field
-            v-model="dateEnd"
+            v-model="selected[0].dataEnd"
             label="Дата окончания действия"
             icon="mdi-calendar"
             readonly
@@ -72,12 +77,15 @@
           ></v-text-field>
         </template>
         <v-date-picker
-          v-model="dateEnd"
+          v-model="selected[0].dataEnd"
           @input="menuEnd = false"
           locale="ru-ru"
           first-day-of-week="1"
         ></v-date-picker>
       </v-menu>
+      <h3 v-else class="fullWidth pb-5">
+        Страница была перезагружена. Данные не подрузились, нажмите закрыть !
+      </h3>
       <v-spacer></v-spacer>
       <v-btn
         depressed
@@ -96,25 +104,34 @@ export default {
   name: "CreateComponent",
   data() {
     return {
-      nsi: {},
       typesNSI: ["Пользовательский", "Технологический", "Защищенный"],
-      dateStart: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .substr(0, 10),
       menuStart: false,
-      dateEnd: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .substr(0, 10),
       menuEnd: false,
     };
+  },
+
+  computed: {
+    selected: {
+      get() {
+        return this.$store.state.selected;
+      },
+      set(value) {
+        this.$store.commit("set", { name: "selected", value: value });
+      },
+    },
   },
   methods: {
     close() {
       this.$router.go(-1);
+      this.$store.commit("set", {
+        name: "message",
+        value: {
+          color: "green",
+          text: "Данные успешно обновлены",
+          run: true,
+        },
+      });
     },
-  },
-  mounted() {
-    this.nsi = this.$route.query.nsi;
   },
 };
 </script>
