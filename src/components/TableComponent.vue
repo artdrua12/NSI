@@ -1,47 +1,50 @@
 <template>
-  <div>
-    <v-data-table
-      v-model="selected"
-      :headers="headers"
-      :items="dataTable"
-      :footer-props="{
-        'items-per-page-options': [4, 7, 10, 20, -1],
-      }"
-      :items-per-page="itemsPerPage"
-      item-key="code"
-      show-select
-      class="elevation-1"
-    >
-      <template v-slot:top>
-        <v-row align="center">
-          <v-col cols="3">
-            <v-select
-              :items="items"
-              label="Выбор действия"
-              solo
-              :menu-props="{ with: 200 }"
-            ></v-select>
-          </v-col>
-          <v-col cols="6"> </v-col>
+  <v-data-table 
+    v-model="selected"
+    :headers="headers"
+    :items="dataTable"
+    :footer-props="{
+      'items-per-page-options': [4, 7, 10, 20, -1],
+    }"
+    :items-per-page="itemsPerPage"
+    item-key="code"
+    show-select
+    class="elevation-3 px-5 mt-10 ma-5"
+  >
+    <template v-slot:top>
+      <v-row align="center">
+        <v-col cols="3">
+          <v-select
+            v-model="selectedAction"
+            @change="changeAction"
+            :disabled="selected.length != 1"
+            :items="actions"
+            label="Выбор действия"
+            item-text="text"
+            item-value="text"
+            return-object
+            outlined
+          >
+          </v-select>
+        </v-col>
+        <v-col cols="6"> </v-col>
 
-          <v-col cols="3">
-            <v-select
-              v-model="selectSetingTable"
-              :items="setingTable"
-              label="Настройки таблицы"
-              item-text="text"
-              item-value="value"
-              return-object
-              multiple
-              chips
-              solo
-              full-width="false"
-            ></v-select>
-          </v-col>
-        </v-row>
-      </template>
-    </v-data-table>
-  </div>
+        <v-col cols="3">
+          <v-select
+            v-model="selectSetingTable"
+            :items="setingTable"
+            label="Настройки таблицы"
+            item-text="text"
+            item-value="value"
+            return-object
+            multiple
+            chips
+            solo
+          ></v-select>
+        </v-col>
+      </v-row>
+    </template>
+  </v-data-table>
 </template>
 
 <script>
@@ -57,10 +60,18 @@ export default {
         { text: "Дата начала действия", value: "dataStart" },
         { text: "Дата окончания действия", value: "dataEnd" },
       ],
-      items: [
+      selectedAction: {},
+      actions: [
         { text: "Создать справочник", disabled: false },
-        { text: "Просмотреть справочник", disabled: true },
-        { text: "Редактировать паспорт/структуру справочника", disabled: true },
+        {
+          text: "Просмотреть справочник",
+          value: "Просмотреть справочник",
+          disabled: true,
+        },
+        {
+          text: "Редактировать паспорт/структуру справочника",
+          disabled: true,
+        },
         { text: "Просмотр свойст справочника", disabled: true },
         { text: "Архивировать", disabled: true },
         { text: "Удалить", disabled: true },
@@ -165,10 +176,17 @@ export default {
     updateHeaders() {
       this.headers = [...this.inisializeHeaders, ...this.selectSetingTable];
     },
+    changeAction() {
+      if (this.selectedAction.text == "Создать справочник") {
+        this.$router.push({ path: "create", query: { nsi: this.selected[0] } });
+      }
+      else {
+        this.$router.push({ path: "loadDischarge" });
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
-
 </style>
