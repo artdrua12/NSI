@@ -58,6 +58,9 @@ export default {
       return this.$store.getters.findDataTable;
     },
   },
+  mounted() {
+    this.$store.dispatch("getServerData");
+  },
   methods: {
     reset() {
       this.$refs.form.reset();
@@ -88,7 +91,6 @@ export default {
         name: "name",
         value: this.name,
       });
-
     },
   },
   components: {

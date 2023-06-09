@@ -82,6 +82,7 @@ export default new Vuex.Store({
     name: "",
     code: "",
     type: "",
+    serverData: null
   },
   getters: {
     get: state => type => {
@@ -119,8 +120,23 @@ export default new Vuex.Store({
     set(state, obj) {
       state[obj.name] = obj.value;
     },
+    setMessage(state, obj) {
+      Vue.set(state, 'message', obj);
+    }
   },
   actions: {
+    async getServerData({ commit }) {
+      try {
+        const response = await fetch(
+          `http://localhost:8085`
+        );
+        const res = await response.text();
+        commit('set', { name: 'serverData', value: res });
+        commit('setMessage', { color: 'green', text: `Запрос на сервер выполнен ${res}`, run: true });
+      } catch (e) {
+        commit('setMessage', { color: 'error', text: 'Ошибка запроса', run: true });
+      }
+    },
   },
   modules: {
   }
